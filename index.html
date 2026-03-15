@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gaetano's Science Lab</title>
+  <title>Progetto SID — Gaetano's Science Lab</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -29,8 +29,6 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* Animated background grid */
     body::before {
       content: '';
       position: fixed;
@@ -43,27 +41,12 @@
       z-index: 0;
     }
 
-    /* Glowing orb top */
-    body::after {
-      content: '';
-      position: fixed;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 400px;
-      background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
     /* ── LANGUAGE SWITCHER ── */
     .lang-bar {
       position: fixed;
       top: 0; right: 0;
       z-index: 100;
       display: flex;
-      gap: 0;
       padding: 10px 20px;
     }
     .lang-btn {
@@ -90,55 +73,55 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding: 80px 20px 50px;
+      padding: 70px 20px 40px;
       border-bottom: 1px solid var(--border);
     }
+    .breadcrumb {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
     .site-tag {
       font-family: 'Share Tech Mono', monospace;
       font-size: 11px;
       letter-spacing: 4px;
       color: var(--accent);
       text-transform: uppercase;
-      margin-bottom: 16px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.2s forwards;
+      margin-bottom: 12px;
     }
     h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-size: clamp(1.8rem, 4vw, 3rem);
       font-weight: 700;
-      letter-spacing: 2px;
       color: #fff;
-      line-height: 1.1;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.4s forwards;
+      line-height: 1.2;
     }
     h1 span { color: var(--accent); }
     .subtitle {
-      margin-top: 16px;
-      font-size: 1.1rem;
+      margin-top: 12px;
+      font-size: 1rem;
       color: var(--text-dim);
       font-weight: 300;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.6s forwards;
     }
-    .location-badge {
+    .station-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 20px;
-      padding: 6px 16px;
-      border: 1px solid var(--border);
+      gap: 8px;
+      margin-top: 18px;
+      padding: 6px 18px;
+      border: 1px solid var(--accent2);
       border-radius: 20px;
       font-family: 'Share Tech Mono', monospace;
       font-size: 12px;
       color: var(--accent2);
-      opacity: 0;
-      animation: fadeUp 0.8s 0.8s forwards;
     }
-    .location-badge::before {
-      content: '◉';
-      animation: pulse 2s infinite;
-    }
+    .station-badge::before { content: '◉'; animation: pulse 2s infinite; }
 
     /* ── NAV ── */
     nav {
@@ -147,7 +130,7 @@
       display: flex;
       justify-content: center;
       gap: 8px;
-      padding: 24px 20px;
+      padding: 20px;
       flex-wrap: wrap;
     }
     nav a {
@@ -157,7 +140,7 @@
       font-size: 12px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 8px 20px;
+      padding: 7px 18px;
       border: 1px solid var(--border);
       border-radius: 3px;
       transition: all 0.2s;
@@ -170,17 +153,46 @@
       background: rgba(0,229,255,0.05);
     }
 
+    /* ── PAGE NAV (sezioni interne) ── */
+    .page-nav {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 20px 20px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-nav a {
+      text-decoration: none;
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 5px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .page-nav a:hover {
+      color: var(--accent2);
+      border-color: var(--accent2);
+      background: rgba(0,255,153,0.05);
+    }
+
     /* ── MAIN ── */
     main {
       position: relative;
       z-index: 1;
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 48px 24px 80px;
     }
 
-    /* ── SECTION TITLE ── */
-    .section-title {
+    /* ── SECTION ── */
+    .section { margin-bottom: 64px; }
+    .section-tag {
       font-family: 'Share Tech Mono', monospace;
       font-size: 11px;
       letter-spacing: 4px;
@@ -189,142 +201,103 @@
       margin-bottom: 8px;
     }
     h2 {
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 600;
       color: #fff;
       margin-bottom: 24px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
     }
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 28px 0 12px;
+    }
 
-    /* ── INTRO BOX ── */
-    .intro-box {
+    /* ── TEXT BOX ── */
+    .text-box {
       background: var(--bg2);
       border: 1px solid var(--border);
       border-left: 3px solid var(--accent);
       border-radius: 6px;
-      padding: 28px 32px;
-      margin-bottom: 48px;
-      font-size: 1.05rem;
+      padding: 24px 28px;
+      margin-bottom: 24px;
       line-height: 1.8;
     }
-    .intro-box p + p { margin-top: 14px; }
+    .text-box p + p { margin-top: 12px; }
 
-    /* ── PROJECT CARDS ── */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 48px;
+    /* ── SPEC TABLE ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
     }
-    .card {
+    .spec-table tr { border-bottom: 1px solid var(--border); }
+    .spec-table tr:hover td { background: var(--bg3); }
+    .spec-table td {
+      padding: 10px 16px;
+      vertical-align: top;
+    }
+    .spec-table td:first-child {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      width: 200px;
+      letter-spacing: 1px;
+    }
+
+    /* ── COMPONENT CARDS ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .comp-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      transition: all 0.2s;
+    }
+    .comp-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .comp-card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .comp-card-name {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .comp-card p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+    /* ── SCHEMA BLOCK ── */
+    .schema-block {
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 28px;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s;
-    }
-    .card:hover {
-      border-color: var(--accent);
-      box-shadow: var(--glow);
-      transform: translateY(-3px);
-      background: var(--bg3);
-    }
-    .card:hover::before { transform: scaleX(1); }
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 14px;
-      display: block;
-    }
-    .card-tag {
+      margin-bottom: 24px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 3px;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .card h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 10px;
-    }
-    .card p {
-      font-size: 0.95rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-    .card-status {
-      display: inline-block;
-      margin-top: 16px;
-      padding: 3px 10px;
-      border-radius: 10px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 1px;
-    }
-    .status-active {
-      background: rgba(0,255,153,0.1);
+      font-size: 13px;
+      line-height: 2;
       color: var(--accent2);
-      border: 1px solid rgba(0,255,153,0.3);
-    }
-    .status-coming {
-      background: rgba(255,107,53,0.1);
-      color: var(--accent3);
-      border: 1px solid rgba(255,107,53,0.3);
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 48px;
-    }
-    .stat {
-      background: var(--bg2);
-      padding: 20px 24px;
       text-align: center;
     }
-    .stat-value {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1.5rem;
-      color: var(--accent);
-      display: block;
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-top: 4px;
-      letter-spacing: 1px;
-    }
+    .schema-arrow { color: var(--text-dim); }
 
-    /* ── LATEST RESULTS ── */
+    /* ── RESULTS TABLE ── */
     .results-table {
       width: 100%;
       border-collapse: collapse;
       font-family: 'Share Tech Mono', monospace;
       font-size: 13px;
-      margin-bottom: 48px;
+      margin-bottom: 24px;
     }
     .results-table th {
       text-align: left;
@@ -338,7 +311,6 @@
     .results-table td {
       padding: 10px 16px;
       border-bottom: 1px solid var(--border);
-      color: var(--text);
     }
     .results-table tr:hover td { background: var(--bg3); }
     .flare-class {
@@ -350,12 +322,24 @@
     .class-c { background: rgba(255,215,0,0.15); color: #FFD700; }
     .class-m { background: rgba(255,140,0,0.15); color: #FF8C00; }
 
+    /* ── NOTE BOX ── */
+    .note-box {
+      background: rgba(0,255,153,0.05);
+      border: 1px solid rgba(0,255,153,0.2);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--accent2);
+    }
+    .note-box::before { content: '▸ '; }
+
     /* ── FOOTER ── */
     footer {
       position: relative;
       z-index: 1;
       text-align: center;
-      padding: 32px 20px;
+      padding: 28px 20px;
       border-top: 1px solid var(--border);
       font-family: 'Share Tech Mono', monospace;
       font-size: 11px;
@@ -364,121 +348,272 @@
     }
     footer span { color: var(--accent); }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50%       { opacity: 0.3; }
     }
 
-    /* ── LANGUAGE CONTENT ── */
+    /* ── LANGUAGE ── */
     [data-lang] { display: none; }
     .lang-it [data-lang="it"] { display: block; }
-    .lang-it [data-lang="it"].inline { display: inline; }
+    .results-table td[data-lang="it"], .results-table thead[data-lang="it"] { display: table-cell; }
+    .results-table thead[data-lang="it"] { display: table-header-group; }
     .lang-en [data-lang="en"] { display: block; }
-    .lang-en [data-lang="en"].inline { display: inline; }
+    .results-table td[data-lang="en"], .results-table thead[data-lang="en"] { display: table-cell; }
+    .results-table thead[data-lang="en"] { display: table-header-group; }
+    .lang-en [data-lang="en"] { display: block; }
   </style>
 </head>
 <body class="lang-it">
 
-  <!-- Language switcher -->
   <div class="lang-bar">
     <button class="lang-btn active" onclick="setLang('it')">IT</button>
     <button class="lang-btn"       onclick="setLang('en')">EN</button>
   </div>
 
-  <!-- Header -->
   <header>
-    <div class="site-tag">gaetano-projects.github.io</div>
-    <h1>Gaetano's <span>Science</span> Lab</h1>
-
-    <p class="subtitle" data-lang="it">Elettronica, radio e fisica sperimentale amatoriale</p>
-    <p class="subtitle" data-lang="en">Amateur electronics, radio and experimental physics</p>
-
-    <div class="location-badge">Torino, Mirafiori Sud — Italia</div>
+    <div class="breadcrumb">
+      <a href="../index.html">Gaetano's Science Lab</a> › 
+      <span data-lang="it">Progetto SID</span>
+      <span data-lang="en">SID Project</span>
+    </div>
+    <div class="site-tag">GAESID Station · Torino, Mirafiori Sud</div>
+    <h1 data-lang="it">Stazione <span>GAESID</span><br>Monitoraggio SID</h1>
+    <h1 data-lang="en">Station <span>GAESID</span><br>SID Monitoring</h1>
+    <p class="subtitle" data-lang="it">Rilevazione di disturbi ionosferici improvvisi causati dai brillamenti solari</p>
+    <p class="subtitle" data-lang="en">Detection of sudden ionospheric disturbances caused by solar flares</p>
+    <div class="station-badge">DHO38 · 23.4 kHz · ~800 km</div>
   </header>
 
-  <!-- Navigation -->
   <nav>
-    <a href="index.html" class="active" data-lang="it">Home</a>
-    <a href="index.html" class="active" data-lang="en">Home</a>
-    <a href="sid/index.html" data-lang="it">Progetto SID</a>
-    <a href="sid/index.html" data-lang="en">SID Project</a>
-    <a href="altri-progetti.html" data-lang="it">Altri Progetti</a>
-    <a href="other-projects.html" data-lang="en">Other Projects</a>
+    <a href="../index.html" data-lang="it">← Home</a>
+    <a href="../index.html" data-lang="en">← Home</a>
   </nav>
+
+  <div class="page-nav">
+    <a href="#introduzione" data-lang="it">Introduzione</a>
+    <a href="#introduzione" data-lang="en">Introduction</a>
+    <a href="#strumentazione" data-lang="it">Strumentazione</a>
+    <a href="#strumentazione" data-lang="en">Instrumentation</a>
+    <a href="#software" data-lang="it">Software</a>
+    <a href="#software" data-lang="en">Software</a>
+    <a href="#risultati" data-lang="it">Risultati</a>
+    <a href="#risultati" data-lang="en">Results</a>
+  </div>
 
   <main>
 
-    <!-- Intro -->
-    <div class="section-title" data-lang="it">◈ Benvenuto</div>
-    <div class="section-title" data-lang="en">◈ Welcome</div>
+    <!-- ══ INTRODUZIONE ══ -->
+    <div class="section" id="introduzione">
+      <div class="section-tag" data-lang="it">◈ 01 — Introduzione</div>
+      <div class="section-tag" data-lang="en">◈ 01 — Introduction</div>
 
-    <h2 data-lang="it">Il Laboratorio</h2>
-    <h2 data-lang="en">The Laboratory</h2>
+      <h2 data-lang="it">Cosa sono i SID</h2>
+      <h2 data-lang="en">What are SIDs</h2>
 
-    <div class="intro-box" data-lang="it">
-      <p>Benvenuto nel mio laboratorio scientifico amatoriale. Mi chiamo Gaetano e sono
-      appassionato di elettronica, radio e fisica sperimentale. Questo sito raccoglie i
-      progetti che sviluppo nel tempo libero, documentando strumentazione, metodologie
-      e risultati ottenuti.</p>
-      <p>Il laboratorio si trova a Torino, in Piemonte, a 240 metri di quota. I progetti
-      spaziano dal monitoraggio radio VLF per la rilevazione di disturbi ionosferici
-      causati dai brillamenti solari, e ad altri temi di fisica sperimentale.</p>
-      <p>Tutto il software sviluppato è open source e disponibile su questa piattaforma.</p>
+      <div class="text-box" data-lang="it">
+        <p>I <strong>Sudden Ionospheric Disturbances</strong> (SID) sono perturbazioni improvvise della ionosfera terrestre causate dall'intensa radiazione ultravioletta e X emessa durante i brillamenti solari. Durante un brillamento, questa radiazione ionizza ulteriormente lo strato D della ionosfera, situato tra 60 e 90 km di quota, alterando le condizioni di propagazione delle onde radio a bassissima frequenza (VLF).</p>
+        <p>Le stazioni navali militari trasmettono continuamente segnali VLF per comunicare con i sottomarini. Questi segnali si propagano nella guida d'onda formata dalla superficie terrestre e dalla ionosfera: monitorando la variazione di ampiezza di questi segnali è possibile rilevare i SID e quindi indirettamente i brillamenti solari.</p>
+        <p>La stazione GAESID monitora il trasmettitore <strong>DHO38</strong>, situato a Rhauderfehn in Germania, che trasmette a <strong>23,4 kHz</strong> con una potenza di 800 kW. La distanza dal sito di ricezione a Torino è di circa <strong>800 km</strong>, un percorso sufficientemente lungo da garantire la dominanza dell'onda di cielo necessaria per la rilevazione dei SID.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p><strong>Sudden Ionospheric Disturbances</strong> (SIDs) are sudden disturbances of the Earth's ionosphere caused by the intense ultraviolet and X-ray radiation emitted during solar flares. During a flare, this radiation further ionises the D layer of the ionosphere, located between 60 and 90 km altitude, altering the propagation conditions of very low frequency (VLF) radio waves.</p>
+        <p>Military naval stations continuously transmit VLF signals to communicate with submarines. These signals propagate in the waveguide formed by the Earth's surface and the ionosphere: by monitoring the amplitude variation of these signals it is possible to detect SIDs and therefore indirectly solar flares.</p>
+        <p>The GAESID station monitors the <strong>DHO38</strong> transmitter, located in Rhauderfehn, Germany, which transmits at <strong>23.4 kHz</strong> with a power of 800 kW. The distance from the receiving site in Turin is approximately <strong>800 km</strong>, a path long enough to ensure the sky wave dominance necessary for SID detection.</p>
+      </div>
     </div>
 
-    <div class="intro-box" data-lang="en">
-      <p>Welcome to my amateur science laboratory. My name is Gaetano and I am passionate
-      about electronics, radio and experimental physics. This site collects the projects
-      I develop in my spare time, documenting instrumentation, methodologies and results.</p>
-      <p>The laboratory is located in Turin, Piedmont, at 240 metres above sea level.
-      Projects range from VLF radio monitoring for the detection of ionospheric
-      disturbances caused by solar flares, and other topics in experimental physics.</p>
-      <p>All software developed is open source and available on this platform.</p>
+    <!-- ══ STRUMENTAZIONE ══ -->
+    <div class="section" id="strumentazione">
+      <div class="section-tag" data-lang="it">◈ 02 — Strumentazione</div>
+      <div class="section-tag" data-lang="en">◈ 02 — Instrumentation</div>
+
+      <h2 data-lang="it">Strumentazione utilizzata</h2>
+      <h2 data-lang="en">Equipment used</h2>
+
+      <div class="comp-grid">
+        <div class="comp-card">
+          <div class="comp-card-icon">📡</div>
+          <div class="comp-card-name">Antenna Loop VLF</div>
+          <p data-lang="it">Loop ad aria da 85 cm di diametro con 50 spire di filo smaltato. Induttanza circa 9,3 mH, accordata a 23,4 kHz con condensatore fisso da 5 nF. Il segnale è prelevato dalla quinta spira per adattamento di impedenza.</p>
+          <p data-lang="en">Air-core loop 85 cm in diameter with 50 turns of enamelled wire. Inductance approximately 9.3 mH, tuned to 23.4 kHz with a fixed 5 nF capacitor. Signal is taken from the 5th turn for impedance matching.</p>
+        </div>
+        <div class="comp-card">
+          <div class="comp-card-icon">📻</div>
+          <div class="comp-card-name">SDRplay RSP1B</div>
+          <p data-lang="it">Ricevitore SDR a 14 bit con copertura da 1 kHz a 2 GHz. Utilizzato in modalità Low-IF con frequenza di campionamento 62,5 kHz centrata a 23,4 kHz. Bias tee interno abilitato per alimentare il futuro preamplificatore.</p>
+          <p data-lang="en">14-bit SDR receiver covering 1 kHz to 2 GHz. Used in Low-IF mode with 62.5 kHz sample rate centred at 23.4 kHz. Internal bias tee enabled to power the future preamplifier.</p>
+        </div>
+        <div class="comp-card">
+          <div class="comp-card-icon">💻</div>
+          <div class="comp-card-name">HP 250 G10</div>
+          <p data-lang="it">Laptop con processore Intel Core i5-1334U, 16 GB RAM, Windows 11 Pro. Scelto per il basso livello di rumore elettromagnetico rispetto alla macchina precedente.</p>
+          <p data-lang="en">Laptop with Intel Core i5-1334U processor, 16 GB RAM, Windows 11 Pro. Chosen for its low electromagnetic noise level compared to the previous machine.</p>
+        </div>
+      </div>
+
+      <h3 data-lang="it">Specifiche tecniche antenna</h3>
+      <h3 data-lang="en">Antenna technical specifications</h3>
+
+      <table class="spec-table" data-lang="it">
+        <tr><td>Tipo</td><td>Loop ad aria, costruzione artigianale</td></tr>
+        <tr><td>Diametro</td><td>85 cm</td></tr>
+        <tr><td>Numero spire</td><td>50</td></tr>
+        <tr><td>Induttanza</td><td>~9,3 mH</td></tr>
+        <tr><td>Condensatore accordo</td><td>5 nF fisso</td></tr>
+        <tr><td>Frequenza risonanza</td><td>23,4 kHz (DHO38)</td></tr>
+        <tr><td>Banda passante</td><td>~6 kHz</td></tr>
+        <tr><td>Posizione</td><td>Balcone esposto a sud, Torino</td></tr>
+        <tr><td>Prelievo segnale</td><td>Quinta spira (adattamento di impedenza)</td></tr>
+      </table>
+
+      <table class="spec-table" data-lang="en">
+        <tr><td>Type</td><td>Air-core loop, handmade</td></tr>
+        <tr><td>Diameter</td><td>85 cm</td></tr>
+        <tr><td>Number of turns</td><td>50</td></tr>
+        <tr><td>Inductance</td><td>~9.3 mH</td></tr>
+        <tr><td>Tuning capacitor</td><td>5 nF fixed</td></tr>
+        <tr><td>Resonance frequency</td><td>23.4 kHz (DHO38)</td></tr>
+        <tr><td>Bandwidth</td><td>~6 kHz</td></tr>
+        <tr><td>Position</td><td>South-facing balcony, Turin</td></tr>
+        <tr><td>Signal tap</td><td>Turn 5 (impedance matching tap)</td></tr>
+      </table>
+
+      <div class="note-box" data-lang="it">
+        La scelta del percorso Torino–DHO38 è stata validata osservando la curva giorno/notte del segnale, che mostra una transizione all'alba di circa 25 dB, confermando la dominanza dell'onda di cielo indispensabile per la rilevazione dei SID.
+      </div>
+      <div class="note-box" data-lang="en">
+        The Turin–DHO38 path was validated by observing the day/night signal curve, which shows a dawn transition of approximately 25 dB, confirming the sky wave dominance essential for SID detection.
+      </div>
     </div>
 
-    <!-- Projects -->
-    <div class="section-title" data-lang="it">◈ Progetti Attivi</div>
-    <div class="section-title" data-lang="en">◈ Active Projects</div>
+    <!-- ══ SOFTWARE ══ -->
+    <div class="section" id="software">
+      <div class="section-tag" data-lang="it">◈ 03 — Software</div>
+      <div class="section-tag" data-lang="en">◈ 03 — Software</div>
 
-    <h2 data-lang="it">Cosa trovi qui</h2>
-    <h2 data-lang="en">What you'll find here</h2>
+      <h2 data-lang="it">Software e flusso dei dati</h2>
+      <h2 data-lang="en">Software and data flow</h2>
 
-    <div class="projects-grid">
+      <div class="schema-block">
+        <span data-lang="it">Antenna Loop</span>
+        <span data-lang="en">Loop Antenna</span>
+        <span class="schema-arrow"> ──── </span>
+        RSP1B
+        <span class="schema-arrow"> ──── </span>
+        SDRuno
+        <span class="schema-arrow"> ──── </span>
+        SDRuno_PWRSNR.csv
+        <br>
+        <span class="schema-arrow">↓</span>
+        <br>
+        <span data-lang="it">Script conversione Python</span>
+        <span data-lang="en">Python conversion script</span>
+        <span class="schema-arrow"> ──── </span>
+        GAESID_DHO38_YYYY-MM-DD.csv
+        <br>
+        <span class="schema-arrow">↓</span>
+        <br>
+        <span data-lang="it">Script visualizzazione Python</span>
+        <span data-lang="en">Python visualisation script</span>
+        <span class="schema-arrow"> ──── </span>
+        <span data-lang="it">Grafico con flare NOAA</span>
+        <span data-lang="en">Chart with NOAA flares</span>
+      </div>
 
-      <a class="card" href="sid/index.html">
-        <span class="card-icon">📡</span>
-        <div class="card-tag">VLF · Ionosfera · Sole</div>
-        <h3 data-lang="it">Stazione GAESID — Monitoraggio SID</h3>
-        <h3 data-lang="en">GAESID Station — SID Monitoring</h3>
-        <p data-lang="it">Rilevazione di Sudden Ionospheric Disturbances causati dai
-        brillamenti solari tramite monitoraggio continuo del segnale VLF della stazione
-        DHO38 a 23.4 kHz.</p>
-        <p data-lang="en">Detection of Sudden Ionospheric Disturbances caused by solar
-        flares through continuous monitoring of the VLF signal from DHO38 station
-        at 23.4 kHz.</p>
-        <span class="card-status status-active" data-lang="it">● Attivo</span>
-        <span class="card-status status-active" data-lang="en">● Active</span>
-      </a>
+      <h3 data-lang="it">SDRuno</h3>
+      <h3 data-lang="en">SDRuno</h3>
 
+      <div class="text-box" data-lang="it">
+        <p>SDRuno è il software ufficiale di SDRplay per la gestione del ricevitore RSP1B. Viene configurato per campionare il segnale a 62,5 kHz centrato su 23,4 kHz con una banda passante di integrazione di 150 Hz intorno alla frequenza di DHO38. Il software registra ogni secondo la potenza e il rapporto segnale/rumore del segnale nel file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>La banda passante di 150 Hz è stata scelta sperimentalmente: valori più stretti introducono instabilità nella misura dovuta alle derive di frequenza, mentre 150 Hz fornisce una baseline più stabile e un miglior rapporto segnale/rumore.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>SDRuno is the official SDRplay software for managing the RSP1B receiver. It is configured to sample the signal at 62.5 kHz centred on 23.4 kHz with an integration bandwidth of 150 Hz around the DHO38 frequency. The software records the signal power and signal-to-noise ratio every second in the file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>The 150 Hz bandwidth was chosen experimentally: narrower values introduce measurement instability due to frequency drift, while 150 Hz provides a more stable baseline and better signal-to-noise ratio.</p>
+      </div>
+
+      <h3 data-lang="it">Script Python</h3>
+      <h3 data-lang="en">Python Scripts</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>Il sistema utilizza tre script Python sviluppati specificamente per questo progetto, tutti disponibili su questo repository:</p>
+        <p><strong>vlf_converti.py</strong> — Converte in tempo reale il file CSV di SDRuno nel formato compatibile con SuperSID, aggiungendo l'intestazione con i metadati della stazione.</p>
+        <p><strong>vlf_recupera.py</strong> — Recupera dati storici dai file SDRuno_PWRSNR archiviati, con ricerca intelligente basata sulla data di creazione dei file per evitare scansioni complete.</p>
+        <p><strong>vlf_visualizza.py</strong> — Visualizza il grafico del segnale VLF sovrapposto ai dati dei brillamenti solari scaricati in tempo reale dalle API NOAA e NASA DONKI. Permette la navigazione tra i giorni con i tasti A/D e il salvataggio dei grafici.</p>
+        <p><strong>vlf_realtime.py</strong> — Visualizza in tempo reale il segnale VLF acquisito dalla stazione, aggiornando il grafico ogni secondo con indicazione dei livelli di potenza e SNR correnti.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>The system uses three Python scripts developed specifically for this project, all available on this repository:</p>
+        <p><strong>vlf_converti.py</strong> — Converts the SDRuno CSV file in real time to the SuperSID-compatible format, adding the station metadata header.</p>
+        <p><strong>vlf_recupera.py</strong> — Recovers historical data from archived SDRuno_PWRSNR files, with intelligent search based on file creation dates to avoid full scans.</p>
+        <p><strong>vlf_visualizza.py</strong> — Displays the VLF signal chart overlaid with solar flare data downloaded in real time from the NOAA and NASA DONKI APIs. Allows navigation between days with A/D keys and chart saving.</p>
+        <p><strong>vlf_realtime.py</strong> — Displays the VLF signal acquired by the station in real time, updating the chart every second with current power and SNR level indication.</p>
+      </div>
+    </div>
+
+    <!-- ══ RISULTATI ══ -->
+    <div class="section" id="risultati">
+      <div class="section-tag" data-lang="it">◈ 04 — Risultati</div>
+      <div class="section-tag" data-lang="en">◈ 04 — Results</div>
+
+      <h2 data-lang="it">Brillamenti Solari Rilevati</h2>
+      <h2 data-lang="en">Solar Flares Detected</h2>
+
+      <div class="text-box" data-lang="it">
+        <p>La stazione è operativa da marzo 2026. La soglia di rilevazione attuale è stimata intorno alla classe <strong>C5-C6</strong>. Con il preamplificatore JFET in fase di sviluppo si prevede di abbassare la soglia verso la classe <strong>C2-C3</strong>.</p>
+      </div>
+      <div class="text-box" data-lang="en">
+        <p>The station has been operational since March 2026. The current detection threshold is estimated at around class <strong>C5-C6</strong>. With the JFET preamplifier under development, the threshold is expected to be lowered towards class <strong>C2-C3</strong>.</p>
+      </div>
+
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Date UTC</th>
+            <th>Class</th>
+            <th>Peak UTC</th>
+            <th>ΔdB</th>
+            <th>Note / Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-03-13</td>
+            <td><span class="flare-class class-c">C8.0</span></td>
+            <td>~15:30</td>
+            <td>−15 dB</td>
+            <td>Chiaramente rilevato / Clearly detected</td>
+          </tr>
+          <tr>
+            <td>2026-03-14</td>
+            <td><span class="flare-class class-c">C2.1</span></td>
+            <td>~12:45</td>
+            <td>~2 dB</td>
+            <td>Al limite / At threshold</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note-box" data-lang="it">
+        I grafici completi giornalieri sono generati automaticamente dallo script vlf_visualizza.py e sovrappongono il segnale VLF misurato ai dati ufficiali dei brillamenti solari forniti da NOAA e NASA.
+      </div>
+      <div class="note-box" data-lang="en">
+        Full daily charts are generated automatically by the vlf_visualizza.py script and overlay the measured VLF signal with official solar flare data provided by NOAA and NASA.
+      </div>
     </div>
 
   </main>
 
   <footer>
-    <p>Gaetano's Science Lab · Torino, Italia ·
+    <p>Gaetano's Science Lab · Torino, Mirafiori Sud ·
       <span>gaetano-projects.github.io</span>
     </p>
-    <p style="margin-top:8px;" data-lang="it">
-      Tutti gli script sono open source e liberamente utilizzabili
-    </p>
-    <p style="margin-top:8px;" data-lang="en">
-      All scripts are open source and freely available
-    </p>
+    <p style="margin-top:8px;" data-lang="it">Tutti gli script sono open source e liberamente utilizzabili</p>
+    <p style="margin-top:8px;" data-lang="en">All scripts are open source and freely available</p>
   </footer>
 
   <script>
@@ -489,7 +624,6 @@
       });
       localStorage.setItem('lang', lang);
     }
-    // Restore saved language
     const saved = localStorage.getItem('lang');
     if (saved) setLang(saved);
   </script>
