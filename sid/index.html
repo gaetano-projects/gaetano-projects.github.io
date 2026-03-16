@@ -285,7 +285,7 @@
       margin-bottom: 24px;
       font-family: 'Share Tech Mono', monospace;
       font-size: 13px;
-      line-height: 2;
+      line-height: 1.4;
       color: var(--accent2);
       text-align: center;
     }
@@ -519,27 +519,15 @@
       <h2 data-lang="en">Software and data flow</h2>
 
       <div class="schema-block">
-        <span data-lang="it">Antenna Loop</span>
-        <span data-lang="en">Loop Antenna</span>
-        <span class="schema-arrow"> ──── </span>
-        RSP1B
-        <span class="schema-arrow"> ──── </span>
-        SDRuno
-        <span class="schema-arrow"> ──── </span>
-        SDRuno_PWRSNR.csv
-        <br>
-        <span class="schema-arrow">↓</span>
-        <br>
-        <span data-lang="it">Script conversione Python</span>
-        <span data-lang="en">Python conversion script</span>
-        <span class="schema-arrow"> ──── </span>
-        GAESID_DHO38_YYYY-MM-DD.csv
-        <br>
-        <span class="schema-arrow">↓</span>
-        <br>
-        <span data-lang="it">Script visualizzazione Python</span>
-        <span data-lang="en">Python visualisation script</span>
-        <span class="schema-arrow"> ──── </span>
+        <span data-lang="it">Antenna Loop ──── RSP1B ──── SDRuno ──── SDRuno_PWRSNR.csv</span>
+        <span data-lang="en">Loop Antenna ──── RSP1B ──── SDRuno ──── SDRuno_PWRSNR.csv</span>
+        <br style="line-height:0.5;"/>
+        <span class="schema-arrow" style="font-size:11px;">↓  vlf_converti.py</span>
+        <br style="line-height:0.5;"/>
+        SDRuno_PWRSNR.csv <span class="schema-arrow">────</span> GAESID_DHO38_YYYY-MM-DD.csv
+        <br/><br/>
+        <span class="schema-arrow" style="font-size:11px;">↓  vlf_visualizza.py / vlf_realtime.py / vlf_detrend.py</span>
+        <br style="line-height:0.5;"/>
         <span data-lang="it">Grafico con flare NOAA</span>
         <span data-lang="en">Chart with NOAA flares</span>
       </div>
