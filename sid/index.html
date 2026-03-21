@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stazione GAESID — Monitoraggio SID VLF, Torino</title>
-  <meta name="description" content="Stazione GAESID di Torino per il monitoraggio dei Sudden Ionospheric Disturbances (SID) causati dai brillamenti solari. Ricevitore SDRplay RSP1B, antenna loop VLF, segnale DHO38 23.4 kHz. Script Python open source."/>
-  <meta name="keywords" content="SID, Sudden Ionospheric Disturbances, VLF, DHO38, 23.4 kHz, solar flare, brillamenti solari, ionosfera, SDRplay RSP1B, antenna loop, SuperSID, Python, GAESID, Torino, Turin, amateur radio, radioamatore"/>
+  <meta name="description" content="Stazione GAESID di Torino per il monitoraggio dei Sudden Ionospheric Disturbances (SID) causati dai brillamenti solari. Ricevitore SDRplay RSP1B, antenna loop VLF, segnali DHO38 23.4 kHz e NSY 45.9 kHz. Script Python open source."/>
+  <meta name="keywords" content="SID, Sudden Ionospheric Disturbances, VLF, DHO38, 23.4 kHz, NSY, 45.9 kHz, solar flare, brillamenti solari, ionosfera, SDRplay RSP1B, antenna loop, SuperSID, Python, GAESID, Torino, Turin, amateur radio, radioamatore"/>
   <meta name="author" content="Gaetano"/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://gaetano-projects.github.io/sid/"/>
@@ -392,7 +392,6 @@
     <h1 data-lang="en">Station <span>GAESID</span><br>SID Monitoring</h1>
     <p class="subtitle" data-lang="it">Rilevazione di disturbi ionosferici improvvisi causati dai brillamenti solari</p>
     <p class="subtitle" data-lang="en">Detection of sudden ionospheric disturbances caused by solar flares</p>
-    <div class="station-badge">DHO38 · 23.4 kHz · ~800 km</div>
   </header>
 
   <nav>
@@ -424,7 +423,7 @@
       <div class="text-box" data-lang="it">
         <p>I <strong>Sudden Ionospheric Disturbances</strong> (SID) sono perturbazioni improvvise della ionosfera terrestre causate dall'intensa radiazione ultravioletta e X emessa durante i brillamenti solari. Durante un brillamento, questa radiazione ionizza ulteriormente lo strato D della ionosfera, situato tra 60 e 90 km di quota, alterando le condizioni di propagazione delle onde radio a bassissima frequenza (VLF).</p>
         <p>Le stazioni navali militari trasmettono continuamente segnali VLF per comunicare con i sottomarini. Questi segnali si propagano nella guida d'onda formata dalla superficie terrestre e dalla ionosfera: monitorando la variazione di ampiezza di questi segnali è possibile rilevare i SID e quindi indirettamente i brillamenti solari.</p>
-        <p>La stazione GAESID monitora il trasmettitore <strong>DHO38</strong>, situato a Rhauderfehn in Germania, che trasmette a <strong>23,4 kHz</strong> con una potenza di 800 kW. La distanza dal sito di ricezione a Torino è di circa <strong>800 km</strong>, un percorso sufficientemente lungo da garantire la dominanza dell'onda di cielo necessaria per la rilevazione dei SID.</p>
+        <p>La stazione GAESID monitora due trasmettitori navali militari in banda VLF. Il trasmettitore <strong>DHO38</strong>, situato a Rhauderfehn in Germania, trasmette a <strong>23,4 kHz</strong> con una potenza di 800 kW; la distanza da Torino è di circa <strong>800 km</strong>. Il trasmettitore <strong>NSY</strong>, situato a Niscemi in Sicilia, trasmette a <strong>45,9 kHz</strong>; la distanza da Torino è di circa <strong>1200 km</strong>. Entrambi i percorsi sono sufficientemente lunghi da garantire la dominanza dell'onda di cielo necessaria per la rilevazione dei SID. Il monitoraggio attivo è attualmente su NSY, che offre maggiore stabilità del segnale grazie all'assenza quasi totale del contributo dell'onda di terra.</p>
       </div>
 
       <!-- Immagine spettro SDRuno -->
@@ -441,7 +440,7 @@
       <div class="text-box" data-lang="en">
         <p><strong>Sudden Ionospheric Disturbances</strong> (SIDs) are sudden disturbances of the Earth's ionosphere caused by the intense ultraviolet and X-ray radiation emitted during solar flares. During a flare, this radiation further ionises the D layer of the ionosphere, located between 60 and 90 km altitude, altering the propagation conditions of very low frequency (VLF) radio waves.</p>
         <p>Military naval stations continuously transmit VLF signals to communicate with submarines. These signals propagate in the waveguide formed by the Earth's surface and the ionosphere: by monitoring the amplitude variation of these signals it is possible to detect SIDs and therefore indirectly solar flares.</p>
-        <p>The GAESID station monitors the <strong>DHO38</strong> transmitter, located in Rhauderfehn, Germany, which transmits at <strong>23.4 kHz</strong> with a power of 800 kW. The distance from the receiving site in Turin is approximately <strong>800 km</strong>, a path long enough to ensure the sky wave dominance necessary for SID detection.</p>
+        <p>The GAESID station monitors two military naval transmitters in the VLF band. The <strong>DHO38</strong> transmitter, located in Rhauderfehn, Germany, transmits at <strong>23.4 kHz</strong> with a power of 800 kW; the distance from Turin is approximately <strong>800 km</strong>. The <strong>NSY</strong> transmitter, located in Niscemi, Sicily, transmits at <strong>45.9 kHz</strong>; the distance from Turin is approximately <strong>1200 km</strong>. Both paths are long enough to ensure the sky wave dominance necessary for SID detection. Active monitoring is currently on NSY, which offers greater signal stability due to the near-total absence of ground wave contribution.</p>
       </div>
       <!-- Immagine segnale tipico 24h -->
       <div style="margin-bottom:24px;margin-top:24px;">
@@ -479,8 +478,8 @@
         <div class="comp-card">
           <div class="comp-card-icon">📡</div>
           <div class="comp-card-name">Antenna Loop VLF</div>
-          <p data-lang="it">Loop ad aria da 85 cm di diametro con 50 spire di filo smaltato. Induttanza circa 9,3 mH, accordata a 23,4 kHz con condensatore fisso da 5 nF. Il segnale è prelevato dalla quinta spira per adattamento di impedenza.</p>
-          <p data-lang="en">Air-core loop 85 cm in diameter with 50 turns of enamelled wire. Inductance approximately 9.3 mH, tuned to 23.4 kHz with a fixed 5 nF capacitor. Signal is taken from the 5th turn for impedance matching.</p>
+          <p data-lang="it">Loop ad aria da 85 cm di diametro con 50 spire di filo smaltato. Induttanza circa 9,3 mH, accordata.</p>
+          <p data-lang="en">Air-core loop 85 cm in diameter with 50 turns of enamelled wire. Inductance approximately 9.3 mH, tuned.</p>
         </div>
         <div class="comp-card">
           <div class="comp-card-icon">📻</div>
@@ -504,9 +503,6 @@
         <tr><td>Diametro</td><td>85 cm</td></tr>
         <tr><td>Numero spire</td><td>50</td></tr>
         <tr><td>Induttanza</td><td>~9,3 mH</td></tr>
-        <tr><td>Condensatore accordo</td><td>5 nF fisso</td></tr>
-        <tr><td>Frequenza risonanza</td><td>23,4 kHz (DHO38)</td></tr>
-        <tr><td>Banda passante</td><td>~6 kHz</td></tr>
         <tr><td>Posizione</td><td>Balcone esposto a sud, Torino</td></tr>
         <tr><td>Prelievo segnale</td><td>Quinta spira (adattamento di impedenza)</td></tr>
       </table>
@@ -516,9 +512,6 @@
         <tr><td>Diameter</td><td>85 cm</td></tr>
         <tr><td>Number of turns</td><td>50</td></tr>
         <tr><td>Inductance</td><td>~9.3 mH</td></tr>
-        <tr><td>Tuning capacitor</td><td>5 nF fixed</td></tr>
-        <tr><td>Resonance frequency</td><td>23.4 kHz (DHO38)</td></tr>
-        <tr><td>Bandwidth</td><td>~6 kHz</td></tr>
         <tr><td>Position</td><td>South-facing balcony, Turin</td></tr>
         <tr><td>Signal tap</td><td>Turn 5 (impedance matching tap)</td></tr>
       </table>
@@ -557,13 +550,13 @@
       <h3 data-lang="en">SDRuno</h3>
 
       <div class="text-box" data-lang="it">
-        <p>SDRuno è il software ufficiale di SDRplay per la gestione del ricevitore RSP1B. Viene configurato per campionare il segnale a 62,5 kHz centrato su 23,4 kHz con una banda passante di integrazione di 150 Hz intorno alla frequenza di DHO38. Il software registra ogni secondo la potenza e il rapporto segnale/rumore del segnale nel file <strong>SDRuno_PWRSNR.csv</strong>.</p>
-        <p>La banda passante di 150 Hz è stata scelta sperimentalmente: valori più stretti introducono instabilità nella misura dovuta alle derive di frequenza, mentre 150 Hz fornisce una baseline più stabile e un miglior rapporto segnale/rumore.</p>
+        <p>SDRuno è il software ufficiale di SDRplay per la gestione del ricevitore RSP1B. Viene configurato per campionare il segnale centrato sulla frequenza monitorata — attualmente <strong>NSY a 45,9 kHz</strong> — e registra ogni secondo la potenza e il rapporto segnale/rumore nel file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>La banda passante di integrazione è di <strong>70 Hz</strong> intorno alla frequenza target. Questo valore è stato scelto sperimentalmente per escludere le righe di rumore presenti nelle immediate vicinanze della portante, ottenendo una misura più stabile e un miglior rapporto segnale/rumore rispetto a bande più larghe.</p>
       </div>
 
       <div class="text-box" data-lang="en">
-        <p>SDRuno is the official SDRplay software for managing the RSP1B receiver. It is configured to sample the signal at 62.5 kHz centred on 23.4 kHz with an integration bandwidth of 150 Hz around the DHO38 frequency. The software records the signal power and signal-to-noise ratio every second in the file <strong>SDRuno_PWRSNR.csv</strong>.</p>
-        <p>The 150 Hz bandwidth was chosen experimentally: narrower values introduce measurement instability due to frequency drift, while 150 Hz provides a more stable baseline and better signal-to-noise ratio.</p>
+        <p>SDRuno is the official SDRplay software for managing the RSP1B receiver. It is configured to sample the signal centred on the monitored frequency — currently <strong>NSY at 45.9 kHz</strong> — and records the signal power and signal-to-noise ratio every second in the file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>The integration bandwidth is <strong>70 Hz</strong> around the target frequency. This value was chosen experimentally to exclude noise lines present immediately adjacent to the carrier, yielding a more stable measurement and better signal-to-noise ratio compared to wider bandwidths.</p>
       </div>
 
       <h3 data-lang="it">Script Python</h3>
@@ -627,10 +620,10 @@
       <h2 data-lang="en">Solar Flares Detected</h2>
 
       <div class="text-box" data-lang="it">
-        <p>La stazione è operativa da marzo 2026. La soglia di rilevazione attuale è stimata intorno alla classe <strong>C5-C6</strong>. Con il preamplificatore JFET in fase di sviluppo si prevede di abbassare la soglia verso la classe <strong>C2-C3</strong>.</p>
+        <p>La stazione è operativa da marzo 2026. Con il monitoraggio di DHO38 (23,4 kHz) la soglia di rilevazione era stimata intorno alla classe <strong>C5-C6</strong>. Dal passaggio a NSY (45,9 kHz) la soglia è scesa significativamente: il primo risultato ottenuto è la rilevazione di un flare <strong>C1.1</strong> il 21 marzo 2026, con una variazione di ~0,2 dB sul segnale smoothed a 120 secondi.</p>
       </div>
       <div class="text-box" data-lang="en">
-        <p>The station has been operational since March 2026. The current detection threshold is estimated at around class <strong>C5-C6</strong>. With the JFET preamplifier under development, the threshold is expected to be lowered towards class <strong>C2-C3</strong>.</p>
+        <p>The station has been operational since March 2026. With DHO38 monitoring (23.4 kHz) the detection threshold was estimated at around class <strong>C5-C6</strong>. Since switching to NSY (45.9 kHz) the threshold has dropped significantly: the first result obtained is the detection of a <strong>C1.1</strong> flare on 21 March 2026, with a variation of ~0.2 dB on the 120-second smoothed signal.</p>
       </div>
 
       <table class="results-table">
@@ -665,6 +658,13 @@
             <td>~2 dB / ~5 dB</td>
             <td>Ionosfera perturbata Kp=3.3 / Perturbed ionosphere</td>
           </tr>
+          <tr>
+            <td><a href="images/VLF_flare_2026-03-21_NSY_smooth120s.png" target="_blank" style="color:var(--accent);text-decoration:none;">2026-03-21 ↗</a></td>
+            <td><span class="flare-class class-c">C1.1</span></td>
+            <td>~16:00</td>
+            <td>~0.2 dB</td>
+            <td>NSY 45.9 kHz · Smooth 120s / NSY 45.9 kHz · 120s smooth</td>
+          </tr>
         </tbody>
       </table>
 
@@ -682,12 +682,20 @@
         <p>L'analisi dei dati raccolti nelle prime settimane di operatività ha evidenziato un limite intrinseco del percorso Torino–DHO38 a 23,4 kHz. Su questo percorso di circa 800 km l'onda di terra, pur molto attenuata, è ancora sufficientemente presente da interferire con l'onda di cielo. Questa interferenza produce fenomeni di cancellazione e rinforzo del segnale in certi momenti della giornata, rendendo difficile l'interpretazione dei SID che avvengono in quelle finestre orarie.</p>
         <p>Un esempio concreto si è verificato il 16 marzo 2026, quando un flare di classe M2.7 ha prodotto un SID quasi invisibile, mentre un successivo flare C5.9, avvenuto tre ore dopo con un flusso X circa cinque volte inferiore, ha dato una risposta significativamente più pronunciata. L'analisi ha mostrato che il flare C5.9 è arrivato esattamente durante un minimo naturale del segnale causato dall'interferenza distruttiva tra onda di terra e onda di cielo, amplificando la risposta ionosferica. Il flare M2.7 invece aveva colpito il percorso durante la fase di plateau, dove la sensibilità alle variazioni è minore.</p>
         <p>Per superare questo limite, la stazione è stata risintonizzata per monitorare <strong>NSY</strong>, il trasmettitore navale americano di Niscemi (Sicilia), che opera a <strong>45,9 kHz</strong>. Il percorso Torino–Niscemi di circa 1200 km, combinato con la frequenza più elevata, elimina praticamente il contributo dell'onda di terra. Il segnale ricevuto è quasi esclusivamente onda di cielo, il che rende il comportamento del segnale più stabile e prevedibile e i SID più proporzionali all'intensità del flare che li ha generati.</p>
+        <p>La sintonia dell'antenna a 45,9 kHz è stata ottenuta collegando in parallelo all'induttore un condensatore fisso da <strong>680 pF</strong> e un condensatore variabile da <strong>570 pF</strong>, per un totale di circa 1250 pF. La combinazione fisso+variabile permette di regolare con precisione la frequenza di risonanza e di compensare le piccole variazioni di induttanza al variare della temperatura.</p>
+        <p>Il primo risultato concreto su NSY è la rilevazione di un flare <strong>C1.1</strong> il 21 marzo 2026, con una variazione di circa <strong>0,2 dB</strong> sul segnale smoothed a 120 secondi. Si tratta di un evento di piccola entità, normalmente al di sotto della soglia di rilevazione della configurazione precedente su DHO38, chiaramente visibile grazie alla maggiore stabilità del percorso Torino–Niscemi.</p>
+        <img src="images/VLF_flare_2026-03-21_NSY_smooth120s.png" alt="Rilevazione flare C1.1 del 21 marzo 2026 su NSY 45.9 kHz" style="width:100%;border-radius:8px;border:1px solid var(--border);margin-top:12px;"/>
+        <p style="font-size:0.85em;color:var(--text-muted);margin-top:6px;">Rilevazione del flare C1.1 del 21 marzo 2026 sul segnale NSY 45,9 kHz. La variazione di ~0,2 dB è chiaramente visibile sul segnale smoothed a 120 secondi, nonostante la piccola entità del flare.</p>
       </div>
 
       <div class="text-box" data-lang="en">
         <p>Analysis of data collected during the first weeks of operation has revealed an intrinsic limitation of the Turin–DHO38 path at 23.4 kHz. Over this approximately 800 km path, the ground wave, although highly attenuated, is still sufficiently present to interfere with the sky wave. This interference produces signal cancellation and reinforcement phenomena at certain times of day, making it difficult to interpret SIDs occurring during those time windows.</p>
         <p>A concrete example occurred on 16 March 2026, when a class M2.7 flare produced an almost invisible SID, while a subsequent C5.9 flare, occurring three hours later with an X-ray flux approximately five times lower, gave a significantly more pronounced response. Analysis showed that the C5.9 flare arrived exactly during a natural signal minimum caused by destructive interference between the ground wave and sky wave, amplifying the ionospheric response. The M2.7 flare, on the other hand, had struck the path during the plateau phase, where sensitivity to variations is lower.</p>
         <p>To overcome this limitation, the station has been retuned to monitor <strong>NSY</strong>, the American naval transmitter at Niscemi (Sicily), operating at <strong>45.9 kHz</strong>. The Turin–Niscemi path of approximately 1200 km, combined with the higher frequency, virtually eliminates the ground wave contribution. The received signal is almost exclusively sky wave, making signal behaviour more stable and predictable and SIDs more proportional to the intensity of the generating flare.</p>
+        <p>The antenna was tuned to 45.9 kHz by connecting a fixed <strong>680 pF</strong> capacitor and a variable <strong>570 pF</strong> capacitor in parallel across the inductor, for a total of approximately 1250 pF. The fixed+variable combination allows precise adjustment of the resonance frequency and compensation for small inductance variations with temperature.</p>
+        <p>The first concrete result on NSY is the detection of a <strong>C1.1</strong> flare on 21 March 2026, with a variation of approximately <strong>0.2 dB</strong> on the 120-second smoothed signal. This is a small event, normally below the detection threshold of the previous DHO38 configuration, clearly visible thanks to the greater stability of the Turin–Niscemi path.</p>
+        <img src="images/VLF_flare_2026-03-21_NSY_smooth120s.png" alt="Detection of C1.1 flare on 21 March 2026 on NSY 45.9 kHz" style="width:100%;border-radius:8px;border:1px solid var(--border);margin-top:12px;"/>
+        <p style="font-size:0.85em;color:var(--text-muted);margin-top:6px;">Detection of the C1.1 flare of 21 March 2026 on the NSY 45.9 kHz signal. The ~0.2 dB variation is clearly visible on the 120-second smoothed signal, despite the small magnitude of the flare.</p>
       </div>
     </div>
 
