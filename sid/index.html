@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stazione GAESID — Monitoraggio SID VLF, Torino</title>
+  <meta name="description" content="Stazione GAESID di Torino per il monitoraggio dei Sudden Ionospheric Disturbances (SID) causati dai brillamenti solari. Ricevitore SDRplay RSP1B, antenna loop VLF, segnali DHO38 23.4 kHz e NSY 45.9 kHz. Script Python open source."/>
+  <meta name="keywords" content="SID, Sudden Ionospheric Disturbances, VLF, DHO38, 23.4 kHz, NSY, 45.9 kHz, solar flare, brillamenti solari, ionosfera, SDRplay RSP1B, antenna loop, SuperSID, Python, GAESID, Torino, Turin, amateur radio, radioamatore"/>
+  <meta name="author" content="Gaetano"/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://gaetano-projects.github.io/sid/"/>
+  <!-- Open Graph -->
+  <meta property="og:title" content="Stazione GAESID — Monitoraggio SID VLF Torino"/>
+  <meta property="og:description" content="Monitoraggio amatoriale dei disturbi ionosferici improvvisi causati dai brillamenti solari tramite segnale VLF DHO38 23.4 kHz. Script Python open source."/>
+  <meta property="og:url" content="https://gaetano-projects.github.io/sid/"/>
+  <meta property="og:type" content="website"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #080d12;
+      --bg2:       #0d1520;
+      --bg3:       #111e2d;
+      --accent:    #00e5ff;
+      --accent2:   #00ff99;
+      --accent3:   #ff6b35;
+      --text:      #c8d8e8;
+      --text-dim:  #6a8a9a;
+      --border:    #1a3a4a;
+      --glow:      0 0 20px rgba(0,229,255,0.3);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LANGUAGE SWITCHER ── */
+    .lang-bar {
+      position: fixed;
+      top: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      padding: 10px 20px;
+    }
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      padding: 5px 14px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .lang-btn:first-child { border-radius: 4px 0 0 4px; }
+    .lang-btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+    .lang-btn.active, .lang-btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 70px 20px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .site-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-weight: 300;
+    }
+    .station-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 6px 18px;
+      border: 1px solid var(--accent2);
+      border-radius: 20px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: var(--accent2);
+    }
+    .station-badge::before { content: '◉'; animation: pulse 2s infinite; }
+
+    /* ── NAV ── */
+    nav {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      transition: all 0.2s;
+      background: var(--bg2);
+    }
+    nav a:hover, nav a.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      background: rgba(0,229,255,0.05);
+    }
+
+    /* ── PAGE NAV (sezioni interne) ── */
+    .page-nav {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 20px 20px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-nav a {
+      text-decoration: none;
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 5px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .page-nav a:hover {
+      color: var(--accent2);
+      border-color: var(--accent2);
+      background: rgba(0,255,153,0.05);
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 64px; }
+    .section-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 28px 0 12px;
+    }
+
+    /* ── TEXT BOX ── */
+    .text-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+    .text-box p + p { margin-top: 12px; }
+
+    /* ── SPEC TABLE ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+    .spec-table tr { border-bottom: 1px solid var(--border); }
+    .spec-table tr:hover td { background: var(--bg3); }
+    .spec-table td {
+      padding: 10px 16px;
+      vertical-align: top;
+    }
+    .spec-table td:first-child {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      width: 200px;
+      letter-spacing: 1px;
+    }
+
+    /* ── COMPONENT CARDS ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .comp-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      transition: all 0.2s;
+    }
+    .comp-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .comp-card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .comp-card-name {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .comp-card p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+    /* ── SCHEMA BLOCK ── */
+    .schema-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--accent2);
+      text-align: center;
+    }
+    .schema-arrow { color: var(--text-dim); }
+
+    /* ── RESULTS TABLE ── */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .results-table th {
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--bg3);
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--border);
+    }
+    .results-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .results-table tr:hover td { background: var(--bg3); }
+    .flare-class {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .class-c { background: rgba(255,215,0,0.15); color: #FFD700; }
+    .class-m { background: rgba(255,140,0,0.15); color: #FF8C00; }
+
+    /* ── NOTE BOX ── */
+    .note-box {
+      background: rgba(0,255,153,0.05);
+      border: 1px solid rgba(0,255,153,0.2);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--accent2);
+    }
+    .note-box::before { content: '▸ '; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 28px 20px;
+      border-top: 1px solid var(--border);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+    footer span { color: var(--accent); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── LANGUAGE ── */
+    [data-lang] { display: none; }
+    .lang-it [data-lang="it"] { display: block; }
+    .results-table td[data-lang="it"], .results-table thead[data-lang="it"] { display: table-cell; }
+    .results-table thead[data-lang="it"] { display: table-header-group; }
+    .lang-en [data-lang="en"] { display: block; }
+    .results-table td[data-lang="en"], .results-table thead[data-lang="en"] { display: table-cell; }
+    .results-table thead[data-lang="en"] { display: table-header-group; }
+    .lang-en [data-lang="en"] { display: block; }
+  </style>
+</head>
+<body class="lang-it">
+
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('it')">IT</button>
+    <button class="lang-btn"       onclick="setLang('en')">EN</button>
+  </div>
+
+  <header>
+    <div class="breadcrumb">
+      <a href="../index.html">Gaetano's Science Lab</a> › 
+      <span data-lang="it">Progetto SID</span>
+      <span data-lang="en">SID Project</span>
+    </div>
+    <div class="site-tag">GAESID Station · Torino, Mirafiori Sud</div>
+    <h1 data-lang="it">Stazione <span>GAESID</span><br>Monitoraggio SID</h1>
+    <h1 data-lang="en">Station <span>GAESID</span><br>SID Monitoring</h1>
+    <p class="subtitle" data-lang="it">Rilevazione di disturbi ionosferici improvvisi causati dai brillamenti solari</p>
+    <p class="subtitle" data-lang="en">Detection of sudden ionospheric disturbances caused by solar flares</p>
+  </header>
+
+  <nav>
+    <a href="../index.html" data-lang="it">← Home</a>
+    <a href="../index.html" data-lang="en">← Home</a>
+  </nav>
+
+  <div class="page-nav">
+    <a href="#introduzione" data-lang="it">Introduzione</a>
+    <a href="#introduzione" data-lang="en">Introduction</a>
+    <a href="#strumentazione" data-lang="it">Strumentazione</a>
+    <a href="#strumentazione" data-lang="en">Instrumentation</a>
+    <a href="#software" data-lang="it">Software</a>
+    <a href="#software" data-lang="en">Software</a>
+    <a href="#risultati" data-lang="it">Risultati</a>
+    <a href="#risultati" data-lang="en">Results</a>
+  </div>
+
+  <main>
+
+    <!-- ══ INTRODUZIONE ══ -->
+    <div class="section" id="introduzione">
+      <div class="section-tag" data-lang="it">◈ 01 — Introduzione</div>
+      <div class="section-tag" data-lang="en">◈ 01 — Introduction</div>
+
+      <h2 data-lang="it">Cosa sono i SID</h2>
+      <h2 data-lang="en">What are SIDs</h2>
+
+      <div class="text-box" data-lang="it">
+        <p>I <strong>Sudden Ionospheric Disturbances</strong> (SID) sono perturbazioni improvvise della ionosfera terrestre causate dall'intensa radiazione ultravioletta e X emessa durante i brillamenti solari. Durante un brillamento, questa radiazione ionizza ulteriormente lo strato D della ionosfera, situato tra 60 e 90 km di quota, alterando le condizioni di propagazione delle onde radio a bassissima frequenza (VLF).</p>
+        <p>Le stazioni navali militari trasmettono continuamente segnali VLF per comunicare con i sottomarini. Questi segnali si propagano nella guida d'onda formata dalla superficie terrestre e dalla ionosfera: monitorando la variazione di ampiezza di questi segnali è possibile rilevare i SID e quindi indirettamente i brillamenti solari.</p>
+        <p>La stazione GAESID monitora due trasmettitori navali militari in banda VLF. Il trasmettitore <strong>DHO38</strong>, situato a Rhauderfehn in Germania, trasmette a <strong>23,4 kHz</strong> con una potenza di 800 kW; la distanza da Torino è di circa <strong>800 km</strong>. Il trasmettitore <strong>NSY</strong>, situato a Niscemi in Sicilia, trasmette a <strong>45,9 kHz</strong>; la distanza da Torino è di circa <strong>1200 km</strong>. Entrambi i percorsi sono sufficientemente lunghi da garantire la dominanza dell'onda di cielo necessaria per la rilevazione dei SID. Il monitoraggio attivo è attualmente su NSY, che offre maggiore stabilità del segnale grazie all'assenza quasi totale del contributo dell'onda di terra.</p>
+      </div>
+
+      <!-- Immagine spettro SDRuno -->
+      <div style="margin-bottom:24px;">
+        <img src="images/spettro_dho38.png" alt="Spettro SDRuno con segnale DHO38 a 23.4 kHz" style="width:100%;border-radius:8px;border:1px solid var(--border);"/>
+        <p data-lang="it" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          Spettro VLF acquisito dalla stazione GAESID — DHO38 chiaramente visibile a 23.4 kHz (linea rossa) con SNR 24.4 dB. A sinistra il segnale HWU (Rosnay, Francia) a 21.75 kHz, non utilizzato per il monitoraggio SID perché il percorso di soli ~650 km è dominato dall'onda di terra, che non risente delle perturbazioni ionosferiche causate dai brillamenti solari.
+        </p>
+        <p data-lang="en" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          VLF spectrum acquired by the GAESID station — DHO38 clearly visible at 23.4 kHz (red line) with SNR 24.4 dB. On the left, the HWU signal (Rosnay, France) at 21.75 kHz, not used for SID monitoring because the short path of only ~650 km is dominated by the ground wave, which is unaffected by the ionospheric disturbances caused by solar flares.
+        </p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p><strong>Sudden Ionospheric Disturbances</strong> (SIDs) are sudden disturbances of the Earth's ionosphere caused by the intense ultraviolet and X-ray radiation emitted during solar flares. During a flare, this radiation further ionises the D layer of the ionosphere, located between 60 and 90 km altitude, altering the propagation conditions of very low frequency (VLF) radio waves.</p>
+        <p>Military naval stations continuously transmit VLF signals to communicate with submarines. These signals propagate in the waveguide formed by the Earth's surface and the ionosphere: by monitoring the amplitude variation of these signals it is possible to detect SIDs and therefore indirectly solar flares.</p>
+        <p>The GAESID station monitors two military naval transmitters in the VLF band. The <strong>DHO38</strong> transmitter, located in Rhauderfehn, Germany, transmits at <strong>23.4 kHz</strong> with a power of 800 kW; the distance from Turin is approximately <strong>800 km</strong>. The <strong>NSY</strong> transmitter, located in Niscemi, Sicily, transmits at <strong>45.9 kHz</strong>; the distance from Turin is approximately <strong>1200 km</strong>. Both paths are long enough to ensure the sky wave dominance necessary for SID detection. Active monitoring is currently on NSY, which offers greater signal stability due to the near-total absence of ground wave contribution.</p>
+      </div>
+      <!-- Immagine segnale tipico 24h -->
+      <div style="margin-bottom:24px;margin-top:24px;">
+        <img src="images/segnale_tipico.png" alt="Andamento tipico del segnale VLF DHO38 nelle 24 ore" style="width:100%;border-radius:8px;border:1px solid var(--border);"/>
+        <p data-lang="it" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          Andamento tipico del segnale DHO38 nelle 24 ore (2026-03-08). Di notte il segnale è alto e stabile grazie all'assenza dello strato D. All'alba (05:58 UTC) cade bruscamente di circa 20 dB con l'attivazione dello strato D. Durante il giorno segue una curva a campana con il massimo a metà giornata. Il flare C2.0 delle 15:00 UTC produce una caduta visibile del segnale. Al tramonto (17:22 UTC) il segnale risale rapidamente con la scomparsa dello strato D.
+        </p>
+        <p data-lang="en" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          Typical DHO38 signal behaviour over 24 hours (2026-03-08). At night the signal is high and stable due to the absence of the D layer. At dawn (05:58 UTC) it drops sharply by about 20 dB as the D layer forms. During the day it follows a bell-shaped curve peaking at midday. The C2.0 flare at 15:00 UTC produces a visible signal drop. At sunset (17:22 UTC) the signal rises rapidly as the D layer disappears.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ══ STRUMENTAZIONE ══ -->
+    <div class="section" id="strumentazione">
+      <div class="section-tag" data-lang="it">◈ 02 — Strumentazione</div>
+      <div class="section-tag" data-lang="en">◈ 02 — Instrumentation</div>
+
+      <h2 data-lang="it">Strumentazione utilizzata</h2>
+      <h2 data-lang="en">Equipment used</h2>
+
+      <!-- Schema hardware -->
+      <div style="margin-bottom:28px;">
+        <img src="images/schema_hardware.png" alt="Schema hardware stazione GAESID" style="width:100%;border-radius:8px;border:1px solid var(--border);"/>
+        <p data-lang="it" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          Schema della stazione GAESID: antenna loop sintonizzata collegata tramite cavo satellitare da 4m al ricevitore RSP1B, connesso via USB al laptop HP 250 G10.
+        </p>
+        <p data-lang="en" style="font-size:0.85rem;color:var(--text-dim);margin-top:8px;text-align:center;">
+          GAESID station diagram: tuned loop antenna connected via 4m satellite cable to the RSP1B receiver, connected via USB to the HP 250 G10 laptop.
+        </p>
+      </div>
+
+      <div class="comp-grid">
+        <div class="comp-card">
+          <div class="comp-card-icon">📡</div>
+          <div class="comp-card-name">Antenna Loop VLF</div>
+          <p data-lang="it">Loop ad aria da 85 cm di diametro con 50 spire di filo smaltato. Induttanza circa 9,3 mH, accordata.</p>
+          <p data-lang="en">Air-core loop 85 cm in diameter with 50 turns of enamelled wire. Inductance approximately 9.3 mH, tuned.</p>
+        </div>
+        <div class="comp-card">
+          <div class="comp-card-icon">📻</div>
+          <div class="comp-card-name">SDRplay RSP1B</div>
+          <p data-lang="it">Ricevitore SDR a 14 bit con copertura da 1 kHz a 2 GHz. Utilizzato in modalità Low-IF con frequenza di campionamento 62,5 kHz centrata a 23,4 kHz.</p>
+          <p data-lang="en">14-bit SDR receiver covering 1 kHz to 2 GHz. Used in Low-IF mode with 62.5 kHz sample rate centred at 23.4 kHz.</p>
+        </div>
+        <div class="comp-card">
+          <div class="comp-card-icon">💻</div>
+          <div class="comp-card-name">HP 250 G10</div>
+          <p data-lang="it">Laptop con processore Intel Core i5-1334U, 16 GB RAM, Windows 11 Pro. Scelto per il basso livello di rumore elettromagnetico rispetto alla macchina precedente.</p>
+          <p data-lang="en">Laptop with Intel Core i5-1334U processor, 16 GB RAM, Windows 11 Pro. Chosen for its low electromagnetic noise level compared to the previous machine.</p>
+        </div>
+      </div>
+
+      <h3 data-lang="it">Specifiche tecniche antenna</h3>
+      <h3 data-lang="en">Antenna technical specifications</h3>
+
+      <table class="spec-table" data-lang="it">
+        <tr><td>Tipo</td><td>Loop ad aria, costruzione artigianale</td></tr>
+        <tr><td>Diametro</td><td>85 cm</td></tr>
+        <tr><td>Numero spire</td><td>50</td></tr>
+        <tr><td>Induttanza</td><td>~9,3 mH</td></tr>
+        <tr><td>Posizione</td><td>Balcone esposto a sud, Torino</td></tr>
+        <tr><td>Prelievo segnale</td><td>Quinta spira (adattamento di impedenza)</td></tr>
+      </table>
+
+      <table class="spec-table" data-lang="en">
+        <tr><td>Type</td><td>Air-core loop, handmade</td></tr>
+        <tr><td>Diameter</td><td>85 cm</td></tr>
+        <tr><td>Number of turns</td><td>50</td></tr>
+        <tr><td>Inductance</td><td>~9.3 mH</td></tr>
+        <tr><td>Position</td><td>South-facing balcony, Turin</td></tr>
+        <tr><td>Signal tap</td><td>Turn 5 (impedance matching tap)</td></tr>
+      </table>
+
+      <div class="note-box" data-lang="it">
+        La scelta del percorso Torino–DHO38 è stata validata osservando la curva giorno/notte del segnale, che mostra una transizione all'alba di circa 25 dB, confermando la dominanza dell'onda di cielo indispensabile per la rilevazione dei SID.
+      </div>
+      <div class="note-box" data-lang="en">
+        The Turin–DHO38 path was validated by observing the day/night signal curve, which shows a dawn transition of approximately 25 dB, confirming the sky wave dominance essential for SID detection.
+      </div>
+    </div>
+
+    <!-- ══ SOFTWARE ══ -->
+    <div class="section" id="software">
+      <div class="section-tag" data-lang="it">◈ 03 — Software</div>
+      <div class="section-tag" data-lang="en">◈ 03 — Software</div>
+
+      <h2 data-lang="it">Software e flusso dei dati</h2>
+      <h2 data-lang="en">Software and data flow</h2>
+
+      <div class="schema-block">
+        <span data-lang="it">Antenna Loop ──── RSP1B ──── SDRuno ──── SDRuno_PWRSNR.csv</span>
+        <span data-lang="en">Loop Antenna ──── RSP1B ──── SDRuno ──── SDRuno_PWRSNR.csv</span>
+        <br style="line-height:0.5;"/>
+        <span class="schema-arrow" style="font-size:11px;">↓  vlf_converti.py</span>
+        <br style="line-height:0.5;"/>
+        SDRuno_PWRSNR.csv <span class="schema-arrow">────</span> GAESID_DHO38_YYYY-MM-DD.csv
+        <br/><br/>
+        <span class="schema-arrow" style="font-size:11px;">↓  vlf_visualizza.py / vlf_realtime.py / vlf_detrend.py</span>
+        <br style="line-height:0.5;"/>
+        <span data-lang="it">Grafico con flare NOAA</span>
+        <span data-lang="en">Chart with NOAA flares</span>
+      </div>
+
+      <h3 data-lang="it">SDRuno</h3>
+      <h3 data-lang="en">SDRuno</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>SDRuno è il software ufficiale di SDRplay per la gestione del ricevitore RSP1B. Viene configurato per campionare il segnale centrato sulla frequenza monitorata — attualmente <strong>NSY a 45,9 kHz</strong> — e registra ogni secondo la potenza e il rapporto segnale/rumore nel file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>La banda passante di integrazione è di <strong>70 Hz</strong> intorno alla frequenza target. Questo valore è stato scelto sperimentalmente per escludere le righe di rumore presenti nelle immediate vicinanze della portante, ottenendo una misura più stabile e un miglior rapporto segnale/rumore rispetto a bande più larghe.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>SDRuno is the official SDRplay software for managing the RSP1B receiver. It is configured to sample the signal centred on the monitored frequency — currently <strong>NSY at 45.9 kHz</strong> — and records the signal power and signal-to-noise ratio every second in the file <strong>SDRuno_PWRSNR.csv</strong>.</p>
+        <p>The integration bandwidth is <strong>70 Hz</strong> around the target frequency. This value was chosen experimentally to exclude noise lines present immediately adjacent to the carrier, yielding a more stable measurement and better signal-to-noise ratio compared to wider bandwidths.</p>
+      </div>
+
+      <h3 data-lang="it">Script Python</h3>
+      <h3 data-lang="en">Python Scripts</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>Il sistema utilizza cinque script Python sviluppati specificamente per questo progetto, tutti disponibili su questo repository:</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_converti.py" style="color:var(--accent2);text-decoration:none;" download>vlf_converti.py ↓</a></strong> — Avviato una volta sola, rimane in esecuzione continua e converte in tempo reale i dati prodotti da SDRuno creando un file CSV giornaliero compatibile con lo standard SuperSID, con nome nella forma <em>GAESID_DHO38_2026-03-16.csv</em>. SDRuno accumula tutti i dati nel suo file <em>SDRuno_PWRSNR.csv</em> senza distinzione di giorno; questo script legge quel file e produce automaticamente un file separato per ogni giorno UTC. Alla mezzanotte UTC crea in automatico il file del nuovo giorno e continua la registrazione senza interruzioni.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_recupera.py" style="color:var(--accent2);text-decoration:none;" download>vlf_recupera.py ↓</a></strong> — Recupera dati storici dai file SDRuno_PWRSNR archiviati, con ricerca intelligente basata sulla data di creazione dei file per evitare scansioni complete.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_visualizza.py" style="color:var(--accent2);text-decoration:none;" download>vlf_visualizza.py ↓</a></strong> — Visualizza il grafico del segnale VLF sovrapposto ai dati dei brillamenti solari scaricati in tempo reale dalle API NOAA e NASA DONKI. Permette la navigazione tra i giorni con i tasti A/D e il salvataggio dei grafici.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_realtime.py" style="color:var(--accent2);text-decoration:none;" download>vlf_realtime.py ↓</a></strong> — Visualizza in tempo reale il segnale VLF acquisito dalla stazione, aggiornando il grafico a intervalli configurabili dall'utente (default 5 minuti). Ad ogni aggiornamento scarica i dati flare aggiornati da NOAA e salva automaticamente un PNG del grafico corrente.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_detrend.py" style="color:var(--accent2);text-decoration:none;" download>vlf_detrend.py ↓</a></strong> — Rimuove il trend lento della variazione ionosferica giornaliera dal segnale VLF, evidenziando le variazioni rapide causate dai brillamenti solari. Utilizza due metodi: baseline locale con esclusione automatica dei flare (metodo predefinito, ottimale per flare di classe C) e media mobile globale. Il grafico mostra il segnale originale con la baseline stimata nel pannello superiore e il segnale detrendato nel pannello inferiore.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>The system uses five Python scripts developed specifically for this project, all available on this repository:</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_converti.py" style="color:var(--accent2);text-decoration:none;" download>vlf_converti.py ↓</a></strong> — Launched once, it runs continuously and converts SDRuno data in real time, creating a daily CSV file compatible with the SuperSID standard, named in the form <em>GAESID_DHO38_2026-03-16.csv</em>. SDRuno accumulates all data in its <em>SDRuno_PWRSNR.csv</em> file regardless of day; this script reads that file and automatically produces one separate file per UTC day. At UTC midnight it automatically creates the new day file and continues recording without interruption.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_recupera.py" style="color:var(--accent2);text-decoration:none;" download>vlf_recupera.py ↓</a></strong> — Recovers historical data from archived SDRuno_PWRSNR files, with intelligent search based on file creation dates to avoid full scans.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_visualizza.py" style="color:var(--accent2);text-decoration:none;" download>vlf_visualizza.py ↓</a></strong> — Displays the VLF signal chart overlaid with solar flare data downloaded in real time from the NOAA and NASA DONKI APIs. Allows navigation between days with A/D keys and chart saving.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_realtime.py" style="color:var(--accent2);text-decoration:none;" download>vlf_realtime.py ↓</a></strong> — Displays the VLF signal acquired by the station in real time, updating the chart at user-configurable intervals (default 5 minutes). At each update it downloads the latest flare data from NOAA and automatically saves a PNG of the current chart.</p>
+        <p><strong><a href="https://gaetano-projects.github.io/sid/script/vlf_detrend.py" style="color:var(--accent2);text-decoration:none;" download>vlf_detrend.py ↓</a></strong> — Removes the slow trend of the daily ionospheric variation from the VLF signal, highlighting the rapid variations caused by solar flares. Uses two methods: local baseline with automatic flare exclusion (default method, optimal for class C flares) and global moving average. The chart shows the original signal with the estimated baseline in the upper panel and the detrended signal in the lower panel.</p>
+      </div>
+      <h3 data-lang="it">Lo Smoothing del Segnale</h3>
+      <h3 data-lang="en">Signal Smoothing</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>Il segnale VLF campionato ogni secondo presenta variazioni rapide di ampiezza dovute al rumore del ricevitore e ai disturbi elettromagnetici locali. Per rendere più leggibile il grafico e facilitare l'identificazione dei SID viene applicato uno <strong>smoothing</strong> tramite il filtro di Savitzky-Golay, che attenua le fluttuazioni rapide preservando la forma e l'ampiezza dei picchi degli eventi.</p>
+        <p>La finestra di smoothing è configurabile dall'utente in secondi. Finestre più ampie producono curve più lisce ma attenuano i dettagli rapidi degli eventi; finestre più strette preservano meglio la forma del SID ma lasciano più rumore visibile.</p>
+        <p>Per il monitoraggio dei SID si consigliano finestre di <strong>20-30 secondi</strong>: sufficienti ad attenuare il rumore impulsivo mantenendo la risoluzione temporale necessaria per seguire l'evoluzione del brillamento, che tipicamente dura da pochi minuti a qualche decina di minuti. Finestre troppo ampie come 300-600 secondi appiattiscono i SID di classe C rendendoli difficilmente distinguibili dalla baseline.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>The VLF signal sampled every second shows rapid amplitude variations due to receiver noise and local electromagnetic interference. To make the chart more readable and facilitate SID identification, <strong>smoothing</strong> is applied using the Savitzky-Golay filter, which attenuates rapid fluctuations while preserving the shape and amplitude of event peaks.</p>
+        <p>The smoothing window is user-configurable in seconds. Wider windows produce smoother curves but attenuate rapid event details; narrower windows better preserve the SID shape but leave more visible noise.</p>
+        <p>For SID monitoring, windows of <strong>20-30 seconds</strong> are recommended: sufficient to attenuate impulsive noise while maintaining the temporal resolution needed to follow the evolution of the flare, which typically lasts from a few minutes to several tens of minutes. Excessively wide windows such as 300-600 seconds flatten class C SIDs making them difficult to distinguish from the baseline.</p>
+      </div>
+
+      <h3 data-lang="it">Il Detrending del Segnale VLF</h3>
+      <h3 data-lang="en">VLF Signal Detrending</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>Il segnale VLF grezzo presenta una lenta variazione giornaliera di ampiezza dovuta al ciclo giorno/notte della ionosfera: il segnale è massimo a metà giornata e minimo di notte, con variazioni tipiche di 10-15 dB nell'arco delle 24 ore. Questa variazione lenta maschera le variazioni rapide causate dai brillamenti solari, in particolare quelle di piccola entità prodotte dai flare di classe C.</p>
+        <p>Il <strong>detrending</strong> consiste nel sottrarre al segnale questa variazione lenta stimata (la baseline), ottenendo un segnale residuo centrato sullo zero che evidenzia solo le deviazioni rapide dalla norma. Un SID appare nel segnale detrendato come un picco positivo o negativo chiaramente visibile, anche quando nel segnale grezzo sarebbe quasi invisibile.</p>
+        <p>Lo script utilizza due metodi. Il <strong>metodo locale</strong> stima la baseline interpolando linearmente tra due zone di segnale pulito ai lati di ogni flare, escludendo automaticamente la durata del flare stesso dal calcolo. È il metodo più accurato per i flare di classe C perché tiene conto della pendenza locale del segnale. Il <strong>metodo globale</strong> usa una media mobile centrata sull'intera giornata ed è più semplice ma meno preciso in presenza di flare ravvicinati.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>The raw VLF signal shows a slow daily amplitude variation due to the day/night cycle of the ionosphere: the signal is maximum at midday and minimum at night, with typical variations of 10-15 dB over 24 hours. This slow variation masks the rapid variations caused by solar flares, particularly the small ones produced by class C flares.</p>
+        <p><strong>Detrending</strong> consists of subtracting this estimated slow variation (the baseline) from the signal, obtaining a residual signal centred on zero that highlights only rapid deviations from the norm. A SID appears in the detrended signal as a clearly visible positive or negative peak, even when it would be almost invisible in the raw signal.</p>
+        <p>The script uses two methods. The <strong>local method</strong> estimates the baseline by linearly interpolating between two clean signal zones on either side of each flare, automatically excluding the flare duration from the calculation. It is the most accurate method for class C flares because it accounts for the local signal slope. The <strong>global method</strong> uses a moving average centred on the entire day and is simpler but less precise in the presence of closely spaced flares.</p>
+      </div>
+
+      <div class="text-box" data-lang="it">
+        <p>Per supportare il monitoraggio di NSY è disponibile una versione aggiornata dello script di visualizzazione, che include in overlay il flusso X-ray GOES scaricato direttamente dai server NOAA:</p>
+        <p><strong><a href="https://raw.githubusercontent.com/gaetano-projects/gaetano-projects.github.io/main/scripts/vlf_visualizza_nsy.py" style="color:var(--accent2);text-decoration:none;" download>vlf_visualizza_nsy.py ↓</a></strong> — Versione aggiornata dello script di visualizzazione, adattata per NSY a 45.9 kHz. Introduce l'overlay del flusso X-ray GOES sul grafico del segnale VLF (tasto <strong>X</strong> per attivare/disattivare), con asse destro logaritmico e fasce colorate per le classi A/B/C/M/X. I dati X-ray vengono salvati in cache locale per evitare download ripetuti. Aggiunge il tasto <strong>R</strong> per aggiornare manualmente grafico, flare e dati X-ray.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>To support NSY monitoring, an updated version of the visualisation script is available, including a GOES X-ray flux overlay downloaded directly from NOAA servers:</p>
+        <p><strong><a href="https://raw.githubusercontent.com/gaetano-projects/gaetano-projects.github.io/main/scripts/vlf_visualizza_nsy.py" style="color:var(--accent2);text-decoration:none;" download>vlf_visualizza_nsy.py ↓</a></strong> — Updated version of the visualisation script, adapted for NSY at 45.9 kHz. Introduces a GOES X-ray flux overlay on the VLF signal chart (press <strong>X</strong> to toggle), with a logarithmic right axis and colour-coded bands for A/B/C/M/X classes. X-ray data is cached locally to avoid repeated downloads. Adds key <strong>R</strong> to manually refresh the chart, flares and X-ray data.</p>
+      </div>
+
+    </div>
+
+    <!-- ══ RISULTATI ══ -->
+    <div class="section" id="risultati">
+      <div class="section-tag" data-lang="it">◈ 04 — Risultati</div>
+      <div class="section-tag" data-lang="en">◈ 04 — Results</div>
+
+      <h2 data-lang="it">Brillamenti Solari Rilevati</h2>
+      <h2 data-lang="en">Solar Flares Detected</h2>
+
+      <div class="text-box" data-lang="it">
+        <p>La stazione è operativa da marzo 2026. Con il monitoraggio di DHO38 (23,4 kHz) la soglia di rilevazione era stimata intorno alla classe <strong>C5-C6</strong>. Dal passaggio a NSY (45,9 kHz) la soglia è scesa significativamente: il primo risultato ottenuto è la rilevazione di un flare <strong>C1.1</strong> il 21 marzo 2026, con una variazione di ~0,2 dB sul segnale smoothed a 120 secondi.</p>
+      </div>
+      <div class="text-box" data-lang="en">
+        <p>The station has been operational since March 2026. With DHO38 monitoring (23.4 kHz) the detection threshold was estimated at around class <strong>C5-C6</strong>. Since switching to NSY (45.9 kHz) the threshold has dropped significantly: the first result obtained is the detection of a <strong>C1.1</strong> flare on 21 March 2026, with a variation of ~0.2 dB on the 120-second smoothed signal.</p>
+      </div>
+
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Date UTC</th>
+            <th>Class</th>
+            <th>Peak UTC</th>
+            <th>ΔdB</th>
+            <th>Note / Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="images/VLF_flare_2026-03-13_smooth30s.png" target="_blank" style="color:var(--accent);text-decoration:none;">2026-03-13 ↗</a></td>
+            <td><span class="flare-class class-c">C8.0</span></td>
+            <td>~15:30</td>
+            <td>−15 dB</td>
+            <td>Chiaramente rilevato / Clearly detected</td>
+          </tr>
+          <tr>
+            <td><a href="images/VLF_flare_2026-03-14_smooth30s.png" target="_blank" style="color:var(--accent);text-decoration:none;">2026-03-14 ↗</a></td>
+            <td><span class="flare-class class-c">C2.1</span></td>
+            <td>~12:45</td>
+            <td>~2 dB</td>
+            <td>Al limite / At threshold</td>
+          </tr>
+          <tr>
+            <td><a href="images/VLF_flare_2026-03-16_smooth30s.png" target="_blank" style="color:var(--accent);text-decoration:none;">2026-03-16 ↗</a></td>
+            <td><span class="flare-class class-m">M2.7</span> + <span class="flare-class class-c">C5.9</span></td>
+            <td>~12:15 / ~14:45</td>
+            <td>~2 dB / ~5 dB</td>
+            <td>Ionosfera perturbata Kp=3.3 / Perturbed ionosphere</td>
+          </tr>
+          <tr>
+            <td><a href="images/VLF_flare_2026-03-21_NSY_smooth120s.png" target="_blank" style="color:var(--accent);text-decoration:none;">2026-03-21 ↗</a></td>
+            <td><span class="flare-class class-c">C1.1</span></td>
+            <td>~16:00</td>
+            <td>~0.2 dB</td>
+            <td>NSY 45.9 kHz · Smooth 120s / NSY 45.9 kHz · 120s smooth</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note-box" data-lang="it">
+        I grafici completi giornalieri sono generati automaticamente dallo script vlf_visualizza.py e sovrappongono il segnale VLF misurato ai dati ufficiali dei brillamenti solari forniti da NOAA e NASA.
+      </div>
+      <div class="note-box" data-lang="en">
+        Full daily charts are generated automatically by the vlf_visualizza.py script and overlay the measured VLF signal with official solar flare data provided by NOAA and NASA.
+      </div>
+
+      <h3 data-lang="it">Sviluppi e aggiornamenti</h3>
+      <h3 data-lang="en">Developments and updates</h3>
+
+      <div class="text-box" data-lang="it">
+        <p>L'analisi dei dati raccolti nelle prime settimane di operatività ha evidenziato un limite intrinseco del percorso Torino–DHO38 a 23,4 kHz. Su questo percorso di circa 800 km l'onda di terra, pur molto attenuata, è ancora sufficientemente presente da interferire con l'onda di cielo. Questa interferenza produce fenomeni di cancellazione e rinforzo del segnale in certi momenti della giornata, rendendo difficile l'interpretazione dei SID che avvengono in quelle finestre orarie.</p>
+        <p>Un esempio concreto si è verificato il 16 marzo 2026, quando un flare di classe M2.7 ha prodotto un SID quasi invisibile, mentre un successivo flare C5.9, avvenuto tre ore dopo con un flusso X circa cinque volte inferiore, ha dato una risposta significativamente più pronunciata. L'analisi ha mostrato che il flare C5.9 è arrivato esattamente durante un minimo naturale del segnale causato dall'interferenza distruttiva tra onda di terra e onda di cielo, amplificando la risposta ionosferica. Il flare M2.7 invece aveva colpito il percorso durante la fase di plateau, dove la sensibilità alle variazioni è minore.</p>
+        <p>Per superare questo limite, la stazione è stata risintonizzata per monitorare <strong>NSY</strong>, il trasmettitore navale americano di Niscemi (Sicilia), che opera a <strong>45,9 kHz</strong>. Il percorso Torino–Niscemi di circa 1200 km, combinato con la frequenza più elevata, elimina praticamente il contributo dell'onda di terra. Il segnale ricevuto è quasi esclusivamente onda di cielo, il che rende il comportamento del segnale più stabile e prevedibile e i SID più proporzionali all'intensità del flare che li ha generati.</p>
+        <p>La sintonia dell'antenna a 45,9 kHz è stata ottenuta collegando in parallelo all'induttore un condensatore fisso da <strong>680 pF</strong> e un condensatore variabile da <strong>570 pF</strong>, per un totale di circa 1250 pF. La combinazione fisso+variabile permette di regolare con precisione la frequenza di risonanza e di compensare le piccole variazioni di induttanza al variare della temperatura.</p>
+        <p>Il primo risultato concreto su NSY è la rilevazione di un flare <strong>C1.1</strong> il 21 marzo 2026, con una variazione di circa <strong>0,2 dB</strong> sul segnale smoothed a 120 secondi. Si tratta di un evento di piccola entità, normalmente al di sotto della soglia di rilevazione della configurazione precedente su DHO38, chiaramente visibile grazie alla maggiore stabilità del percorso Torino–Niscemi.</p>
+        <img src="images/VLF_flare_2026-03-21_NSY_smooth120s.png" alt="Rilevazione flare C1.1 del 21 marzo 2026 su NSY 45.9 kHz" style="width:100%;border-radius:8px;border:1px solid var(--border);margin-top:12px;"/>
+        <p style="font-size:0.85em;color:var(--text-muted);margin-top:6px;">Rilevazione del flare C1.1 del 21 marzo 2026 sul segnale NSY 45,9 kHz. La variazione di ~0,2 dB è chiaramente visibile sul segnale smoothed a 120 secondi, nonostante la piccola entità del flare.</p>
+      </div>
+
+      <div class="text-box" data-lang="en">
+        <p>Analysis of data collected during the first weeks of operation has revealed an intrinsic limitation of the Turin–DHO38 path at 23.4 kHz. Over this approximately 800 km path, the ground wave, although highly attenuated, is still sufficiently present to interfere with the sky wave. This interference produces signal cancellation and reinforcement phenomena at certain times of day, making it difficult to interpret SIDs occurring during those time windows.</p>
+        <p>A concrete example occurred on 16 March 2026, when a class M2.7 flare produced an almost invisible SID, while a subsequent C5.9 flare, occurring three hours later with an X-ray flux approximately five times lower, gave a significantly more pronounced response. Analysis showed that the C5.9 flare arrived exactly during a natural signal minimum caused by destructive interference between the ground wave and sky wave, amplifying the ionospheric response. The M2.7 flare, on the other hand, had struck the path during the plateau phase, where sensitivity to variations is lower.</p>
+        <p>To overcome this limitation, the station has been retuned to monitor <strong>NSY</strong>, the American naval transmitter at Niscemi (Sicily), operating at <strong>45.9 kHz</strong>. The Turin–Niscemi path of approximately 1200 km, combined with the higher frequency, virtually eliminates the ground wave contribution. The received signal is almost exclusively sky wave, making signal behaviour more stable and predictable and SIDs more proportional to the intensity of the generating flare.</p>
+        <p>The antenna was tuned to 45.9 kHz by connecting a fixed <strong>680 pF</strong> capacitor and a variable <strong>570 pF</strong> capacitor in parallel across the inductor, for a total of approximately 1250 pF. The fixed+variable combination allows precise adjustment of the resonance frequency and compensation for small inductance variations with temperature.</p>
+        <p>The first concrete result on NSY is the detection of a <strong>C1.1</strong> flare on 21 March 2026, with a variation of approximately <strong>0.2 dB</strong> on the 120-second smoothed signal. This is a small event, normally below the detection threshold of the previous DHO38 configuration, clearly visible thanks to the greater stability of the Turin–Niscemi path.</p>
+        <img src="images/VLF_flare_2026-03-21_NSY_smooth120s.png" alt="Detection of C1.1 flare on 21 March 2026 on NSY 45.9 kHz" style="width:100%;border-radius:8px;border:1px solid var(--border);margin-top:12px;"/>
+        <p style="font-size:0.85em;color:var(--text-muted);margin-top:6px;">Detection of the C1.1 flare of 21 March 2026 on the NSY 45.9 kHz signal. The ~0.2 dB variation is clearly visible on the 120-second smoothed signal, despite the small magnitude of the flare.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Gaetano's Science Lab · Torino, Mirafiori Sud ·
+      <span>gaetano-projects.github.io</span>
+    </p>
+    <p style="margin-top:8px;" data-lang="it">Tutti gli script sono open source e liberamente utilizzabili</p>
+    <p style="margin-top:8px;" data-lang="en">All scripts are open source and freely available</p>
+    <p style="margin-top:12px;color:#444;font-size:10px;" data-lang="it">Pagine e script sviluppati con il supporto di <a href="https://claude.ai" style="color:#555;text-decoration:none;">Claude AI</a> (Anthropic)</p>
+    <p style="margin-top:12px;color:#444;font-size:10px;" data-lang="en">Pages and scripts developed with the assistance of <a href="https://claude.ai" style="color:#555;text-decoration:none;">Claude AI</a> (Anthropic)</p>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+      });
+      localStorage.setItem('lang', lang);
+    }
+    const saved = localStorage.getItem('lang');
+    if (saved) setLang(saved);
+  </script>
+
+</body>
+</html>
